@@ -14,7 +14,9 @@ $ npm install xqsql
 
 ### Introducing xqsql
 
+```js
 const xqsql = require('../index');
+```
 
 ### CURD operation
 
