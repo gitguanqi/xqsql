@@ -1,0 +1,30 @@
+{
+  "name": "xqsql",
+  "version": "1.0.0",
+  "description": "This is a method warehouse for automatically generating various sql statements.",
+  "main": "index.js",
+  "bin": {
+    "xqsql": "index.js"
+  },
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "demo": "node test/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gitguanqi/xqsql.git"
+  },
+  "keywords": [
+    "sql",
+    "xqsql"
+  ],
+  "author": "gitguanqi",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/gitguanqi/xqsql/issues"
+  },
+  "homepage": "https://github.com/gitguanqi/xqsql#readme"
+}
