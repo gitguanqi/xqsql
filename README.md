@@ -4,19 +4,32 @@ This is a method warehouse for automatically generating various sql statements.
 
 [View Chinese documents](./zh.md)
 
-## Instructions
+## Install
 
-### Install xqsql
+**Browser**:
+
+import cdn
+
+```html
+<!-- Browser -->
+<script src="https://unpkg.com/xqsql/lib/xqsql.min.js"></script>
+<!-- es module -->
+<script type="module">
+    import xqsql from '../lib/xqsql-esm.min.js';
+</script>
+```
+
+**Node**:
 
 ```sh
-$ npm install xqsql
+npm install xqsql
 ```
-
-### Introducing xqsql
 
 ```js
-const xqsql = require('../index');
+const xqsql = require('xqsql');
 ```
+
+## Usage
 
 ### CURD operation
 
@@ -122,7 +135,7 @@ console.log('Query default mode (all):', getDefaultSql);
 // Query the default mode (all): SELECT id,name,number,price FROM `goods`
 ```
 
-2. More conditional modes
+2.More conditional modes
 
 ```js
 const getMoretSql = xqsql.get('goods', {
@@ -134,7 +147,7 @@ console.log('More condition mode:', getMoretSql);
 // More conditional patterns: SELECT id,name,number,price FROM `goods` WHERE id = '1' AND name LIKE'%banana%'
 ```
 
-3. Paging query
+3.Paging query
 
 ```js
 let getListParams = {
@@ -228,7 +241,7 @@ console.log('Update (single) statement:', upOneSql);
 // Update (single) statement: UPDATE `goods` SET number = 10,price = 9 WHERE id = '1'
 ```
 
-2. Multiple updates
+2.Multiple updates
 
 ```js
 upParams.ids = [1,2,3];
@@ -237,7 +250,7 @@ console.log('Update (multiple) statements:', upMoreSql);
 // Update (multiple) statements: UPDATE `goods` SET number = 10,price = 9 WHERE id in (1,2,3)
 ```
 
-3. Update all
+3.Update all
 
 ```js
 let upSql = xqsql.up('goods', upParams, upFields,'all');
@@ -261,7 +274,7 @@ console.log('Delete (single) statement:', delOneSql);
 // Delete (single) statement: DELETE FROM `goods` WHERE id = '1'
 ```
 
-2. Delete multiple
+2.Delete multiple
 
 ```js
 let delMoreParams = {
@@ -273,7 +286,7 @@ console.log('Delete (multiple) statements:', delMoreSql);
 // Delete (multiple) statements: DELETE FROM `goods` WHERE id in (1,2,3)
 ```
 
-3. Delete all
+3.Delete all
 
 ```js
 let delSql = xqsql.del('goods','','all');
@@ -281,10 +294,9 @@ console.log('Delete (all) statements:', delSql);
 // Delete (all) statements: DELETE FROM `goods`
 ```
 
-## View example
+## View xqsql
 
-Run this script to view the demonstration case: `npm run demo`
-
+Run this script to view the demonstration case: `npm run test:node`, `npm run test:browser`.
 
 ## ask questions
 

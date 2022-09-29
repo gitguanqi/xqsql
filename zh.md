@@ -1,158 +1,173 @@
 # xqsql
 
-这是一个自动生成各种sql语句的方法仓库。
+This is a method warehouse for automatically generating various sql statements.
 
-[查看英文文档](./README.md)
+[View Chinese documents](./zh.md)
 
-## 使用方法
+## Install
 
-### 安装xqsql
+**Browser**:
 
-```sh
-$ npm install xqsql
+import cdn
+
+```html
+<!-- Browser -->
+<script src="https://unpkg.com/xqsql/lib/xqsql.min.js"></script>
+<!-- es module -->
+<script type="module">
+    import xqsql from '../lib/xqsql-esm.min.js';
+</script>
 ```
 
-### 引入xqsql
+**Node**:
 
-const xqsql = require('../index');
+```sh
+npm install xqsql
+```
 
-### CURD操作
+```js
+const xqsql = require('xqsql');
+```
 
-+ 创建记录
+## Usage
 
-本方法适用于创建单条或者多条记录
+### CURD operation
 
-req.body的参数
++ Create record
+
+This method is suitable for creating single or multiple records
+
+Parameters of req.body
 
 ```js
 const addParams = [
     {
-        name: '苹果',
+        name:'Apple',
         number: 10,
         price: 8.8
     },
     {
-        name: '蓝莓',
+        name:'Blueberry',
         number: 20,
         price: 9.9
     }
 ]
 ```
 
-字段数组
+Field array
 
 ```js
 const addFields = [
     {
-        name: '商品名称',
-        value: 'name',
+        name:'Product name',
+        value:'name',
         isMust: true
     },
     {
-        name: '商品数量',
-        value: 'number',
+        name:'Product quantity',
+        value:'number',
         isMust: true
     },
     {
-        name: '商品价格',
-        value: 'price',
+        name:'Commodity price',
+        value:'price',
         isMust: true
     }
 ]
 ```
 
-查看结果
+View Results
 
 ```js
 const addSql = xqsql.add('goods', addParams, addFields);
-console.log('添加后的语句是：', addSql); 
+console.log('The added statement is:', addSql);
 
-// 添加后的语句是： INSERT INTO `goods` (id, name,number,price) VALUES (0,"苹果",10,8),(0,"蓝莓",20,9)
+// The added statement is: INSERT INTO `goods` (id, name,number,price) VALUES (0,"apple",10,8),(0,"blueberry",20,9)
 ```
 
-+  获取信息
++ Get information
 
-1.默认查询
+1. Default query
 
-req.query的参数
+Parameters of req.query
 
 ```js
 let getDefaultOneParams = [1];
 let getDefaultMoreParams = [1,2,3];
 ```
 
-查看结果（默认模式单个）
+View results (single in default mode)
 
 ```js
 const getDefaultOneSql = xqsql.get('goods', {
-    type: 'one',
-    key: 'id',
+    type:'one',
+    key:'id',
     ids: getDefaultOneParams,
-}, 'default', 'id,name,number,price');
+},'default','id,name,number,price');
 
-console.log('查询默认模式(单个)：', getDefaultOneSql);
+console.log('Query default mode (single):', getDefaultOneSql);
 
-// 查询默认模式(单个)： SELECT id,name,number,price FROM `goods` WHERE id = '1'
+// Query the default mode (single): SELECT id,name,number,price FROM `goods` WHERE id = '1'
 ```
 
-查看结果（默认模式单个）
+View results (single in default mode)
 
 ```js
 const getDefaultMoreSql = xqsql.get('goods', {
-    type: 'more',
-    key: 'id',
+    type:'more',
+    key:'id',
     ids: getDefaultMoreParams,
-}, 'default', 'id,name,number,price');
+},'default','id,name,number,price');
 
-console.log('查询默认模式(多个)：', getDefaultMoreSql);
+console.log('Query default mode (multiple):', getDefaultMoreSql);
 
-// 查询默认模式(多个)： SELECT id,name,number,price FROM `goods` WHERE id in (1,2,3)
+// Query the default mode (multiple): SELECT id,name,number,price FROM `goods` WHERE id in (1,2,3)
 ```
 
-查看结果（默认模式所有）
+View results (all in default mode)
 
 ```js
 const getDefaultSql = xqsql.get('goods', {
-    type: 'all',
-}, 'default', 'id,name,number,price');
+    type:'all',
+},'default','id,name,number,price');
 
-console.log('查询默认模式(所有)：', getDefaultSql);
-// 查询默认模式(所有)： SELECT id,name,number,price FROM `goods`
+console.log('Query default mode (all):', getDefaultSql);
+// Query the default mode (all): SELECT id,name,number,price FROM `goods`
 ```
 
-2.更多条件模式
+2.More conditional modes
 
 ```js
 const getMoretSql = xqsql.get('goods', {
     id: 1,
-    name: "香蕉",
-}, 'more', 'id,name,number,price');
+    name: "Banana",
+},'more','id,name,number,price');
 
-console.log('更多条件模式：', getMoretSql);
-// 更多条件模式： SELECT id,name,number,price FROM `goods` WHERE  id = '1' AND name LIKE '%香蕉%'
+console.log('More condition mode:', getMoretSql);
+// More conditional patterns: SELECT id,name,number,price FROM `goods` WHERE id = '1' AND name LIKE'%banana%'
 ```
 
-3. 分页查询
+3.Paging query
 
 ```js
 let getListParams = {
-    name: "香蕉",
+    name: "Banana",
     page: 1,
     size: 10,
 };
-let currentPageSize = (getListParams.page - 1) * getListParams.size;
+let currentPageSize = (getListParams.page-1) * getListParams.size;
 let getListFields = [
     {
-        name: '商品名称',
-        value: 'name'
+        name:'Product name',
+        value:'name'
     },
     {
-        name: '商品数量',
-        value: 'number'
+        name:'Product quantity',
+        value:'number'
     },
     {
-        name: '商品价格',
-        value: 'price'
+        name:'Commodity price',
+        value:'price'
     }
 ]
 
@@ -171,31 +186,31 @@ for (const item of getListFields) {
 let getListSql = xqsql.get('goods', {
     list: getList,
     sorts: {
-        name: getListParams.sort || 'create_time',
-        val: getListParams.sortRule || 'DESC'
+        name: getListParams.sort ||'create_time',
+        val: getListParams.sortRule ||'DESC'
     },
     limits: {
         page: currentPageSize,
         size: getListParams.size || 10
     }
-}, 'page');
+},'page');
 
-console.log('分页列表查询后的语句是：', getListSql);
-/* 
-分页列表查询后的语句是： {
-  sql: "SELECT * FROM `goods` WHERE  name LIKE '%香蕉%' ORDER by create_time DESC LIMIT 0,10",
-  count: "SELECT COUNT(id) FROM `goods` WHERE  name LIKE '%香蕉%'"
+console.log('The sentence after the paging list query is:', getListSql);
+/*
+The sentence after the paging list query is: {
+  sql: "SELECT * FROM `goods` WHERE name LIKE'%banana%' ORDER by create_time DESC LIMIT 0,10",
+  count: "SELECT COUNT(id) FROM `goods` WHERE name LIKE'%banana%'"
 }
 */
 ```
 
-+ 更新
++ Update
 
-公共部分
+Public section
 
 ```js
 const upParams = {
-    key: 'id',
+    key:'id',
     ids: null,
     list: {
         number: 10,
@@ -205,89 +220,88 @@ const upParams = {
 
 const upFields = [
     {
-        name: '商品数量',
-        value: 'number',
+        name:'Product quantity',
+        value:'number',
         isMust: true
     },
     {
-        name: '商品价格',
-        value: 'price',
+        name:'Commodity price',
+        value:'price',
         isMust: true
     }
 ]
 ```
 
-1.单条更新
+1. Single update
 
 ```js
 upParams.ids = [1];
 let upOneSql = xqsql.up('goods', upParams, upFields);
-console.log('更新（单条）语句：', upOneSql);
-// 更新（单条）语句： UPDATE `goods` SET number = 10,price = 9 WHERE id = '1'
+console.log('Update (single) statement:', upOneSql);
+// Update (single) statement: UPDATE `goods` SET number = 10,price = 9 WHERE id = '1'
 ```
 
-2.多条更新
+2.Multiple updates
 
 ```js
 upParams.ids = [1,2,3];
-let upMoreSql = xqsql.up('goods', upParams, upFields, 'more');
-console.log('更新（多条）语句：', upMoreSql);
-// 更新（多条）语句： UPDATE `goods` SET number = 10,price = 9 WHERE id in (1,2,3)
+let upMoreSql = xqsql.up('goods', upParams, upFields,'more');
+console.log('Update (multiple) statements:', upMoreSql);
+// Update (multiple) statements: UPDATE `goods` SET number = 10,price = 9 WHERE id in (1,2,3)
 ```
 
-3.全部更新
+3.Update all
 
 ```js
-let upSql = xqsql.up('goods', upParams, upFields, 'all');
-console.log('更新（全部）语句：', upSql);
-// 更新（全部）语句： UPDATE `goods` SET number = 10,price = 9
+let upSql = xqsql.up('goods', upParams, upFields,'all');
+console.log('Update (all) statement:', upSql);
+// Update (all) statement: UPDATE `goods` SET number = 10, price = 9
 ```
 
-+ 删除
++ Delete
 
-参数 req.query
+Parameter req.query
 
-1.删除单个
+1. Delete a single
 
 ```js
 let delOneParams = {
-    key: 'id',
+    key:'id',
     ids: [1]
 };
 let delOneSql = xqsql.del('goods', delOneParams);
-console.log('删除（单条）语句：', delOneSql);
-// 删除（单条）语句： DELETE FROM `goods` WHERE id = '1'
+console.log('Delete (single) statement:', delOneSql);
+// Delete (single) statement: DELETE FROM `goods` WHERE id = '1'
 ```
 
-2.删除多个
+2.Delete multiple
 
 ```js
 let delMoreParams = {
-    key: 'id',
+    key:'id',
     ids: [1,2,3]
 };
-let delMoreSql = xqsql.del('goods', delMoreParams, 'more');
-console.log('删除（多条）语句：', delMoreSql);
-// 删除（多条）语句： DELETE FROM `goods` WHERE id in (1,2,3)
+let delMoreSql = xqsql.del('goods', delMoreParams,'more');
+console.log('Delete (multiple) statements:', delMoreSql);
+// Delete (multiple) statements: DELETE FROM `goods` WHERE id in (1,2,3)
 ```
 
-3.删除所有
+3.Delete all
 
 ```js
-let delSql = xqsql.del('goods', '', 'all');
-console.log('删除（所有）语句：', delSql);
-// 删除（所有）语句： DELETE FROM `goods`
+let delSql = xqsql.del('goods','','all');
+console.log('Delete (all) statements:', delSql);
+// Delete (all) statements: DELETE FROM `goods`
 ```
 
-## 查看示例
+## View xqsql
 
-运行这个脚本查看展示案例：`npm run demo`
+Run this script to view the demonstration case: `npm run test:node`, `npm run test:browser`.
 
-
-## 提问题
+## ask questions
 
 [submit your question](https://github.com/gitguanqi/xqsql/issues/new)
 
-## 作者
+## Author
 
 [@gitguanqi](https://github.com/gitguanqi)

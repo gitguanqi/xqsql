@@ -1,4 +1,4 @@
-const xqsql = require('../index');
+const xqsql = require('../lib/xqsql');
 
 // 创建记录
 
@@ -6,8 +6,7 @@ const xqsql = require('../index');
 console.log('-------------------- 创建记录 开始 --------------------');
 
 // req.body的参数
-const addParams = [
-    {
+const addParams = [{
         name: '苹果',
         number: 10,
         price: 8.8
@@ -20,8 +19,7 @@ const addParams = [
 ]
 
 // 字段数组
-const addFields = [
-    {
+const addFields = [{
         name: '商品名称',
         value: 'name',
         isMust: true
@@ -49,7 +47,7 @@ console.log('-------------------- 查询记录 开始 --------------------');
 // 1.默认查询
 // req.query的参数
 let getDefaultOneParams = [1];
-let getDefaultMoreParams = [1,2,3];
+let getDefaultMoreParams = [1, 2, 3];
 
 const getDefaultOneSql = xqsql.get('goods', {
     type: 'one',
@@ -88,8 +86,7 @@ let getListParams = {
     size: 10,
 };
 let currentPageSize = (getListParams.page - 1) * getListParams.size;
-let getListFields = [
-    {
+let getListFields = [{
         name: '商品名称',
         value: 'name'
     },
@@ -142,8 +139,7 @@ const upParams = {
     }
 }
 
-const upFields = [
-    {
+const upFields = [{
         name: '商品数量',
         value: 'number',
         isMust: true
@@ -161,7 +157,7 @@ let upOneSql = xqsql.up('goods', upParams, upFields);
 console.log('更新（单条）语句：', upOneSql);
 
 // 2.多条更新
-upParams.ids = [1,2,3];
+upParams.ids = [1, 2, 3];
 let upMoreSql = xqsql.up('goods', upParams, upFields, 'more');
 console.log('更新（多条）语句：', upMoreSql);
 
@@ -188,7 +184,7 @@ console.log('删除（单条）语句：', delOneSql);
 // 2.删除多个
 let delMoreParams = {
     key: 'id',
-    ids: [1,2,3]
+    ids: [1, 2, 3]
 };
 let delMoreSql = xqsql.del('goods', delMoreParams, 'more');
 console.log('删除（多条）语句：', delMoreSql);
