@@ -290,7 +290,7 @@ console.log('删除（所有）语句：', delSql);
 
 ## 提问题
 
-[submit your question](https://github.com/gitguanqi/xqsql/issues/new)
+[这里提问](https://github.com/gitguanqi/xqsql/issues/new)
 
 ## 作者
 
