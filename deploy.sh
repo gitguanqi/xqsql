@@ -8,7 +8,7 @@ set 0
 git add .
 read -p "Please input your commit:" commit
 git commit -m "$commit"
-git push origin main
+git push origin master
 
 exit 0
 
