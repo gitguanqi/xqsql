@@ -12,7 +12,7 @@ import cdn
 
 ```html
 <!-- Browser -->
-<script src="https://unpkg.com/xqsql/lib/xqsql.min.js"></script>
+<script src="https://xqgj.cc/xqcdn/libs/xqsql/xqsql.min.js"></script>
 <!-- es module -->
 <script type="module">
     import xqsql from '../lib/xqsql-esm.min.js';

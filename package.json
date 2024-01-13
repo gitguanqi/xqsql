@@ -1,6 +1,6 @@
 {
   "name": "xqsql",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "This is a method warehouse for automatically generating various sql statements.",
   "main": "lib/xqsql.js",
   "directories": {
