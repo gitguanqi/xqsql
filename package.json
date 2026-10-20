@@ -1,29 +1,65 @@
 {
-  "name": "xqsql",
-  "version": "1.0.3",
-  "description": "This is a method warehouse for automatically generating various sql statements.",
-  "main": "lib/xqsql.js",
-  "directories": {
-      "lib": "lib",
-      "test": "test"
-  },
-  "scripts": {
-      "test": "echo Error: no test specified && exit 1",
-      "test:node": "node test/node.js",
-      "test:browser": "live-server --port=4001 --host=localhost"
-  },
-  "repository": {
-      "type": "git",
-      "url": "git+https://github.com/gitguanqi/xqsql.git"
-  },
-  "keywords": [
-      "sql",
-      "xqsql"
-  ],
-  "author": "gitguanqi",
-  "license": "MIT",
-  "bugs": {
-      "url": "https://github.com/gitguanqi/xqsql/issues"
-  },
-  "homepage": "https://github.com/gitguanqi/xqsql#readme"
+    "name": "xqsql",
+    "version": "2.0.0",
+    "description": "Zero-dependency MySQL statement builder with safe quoting.",
+    "main": "lib/xqsql.js",
+    "module": "lib/xqsql-esm.mjs",
+    "browser": "lib/xqsql.min.js",
+    "unpkg": "lib/xqsql.min.js",
+    "jsdelivr": "lib/xqsql.min.js",
+    "types": "lib/types/index.d.ts",
+    "sideEffects": false,
+    "exports": {
+        ".": {
+            "types": "./lib/types/index.d.ts",
+            "import": "./lib/xqsql-esm.mjs",
+            "require": "./lib/xqsql.js",
+            "default": "./lib/xqsql.js"
+        },
+        "./lib/*": "./lib/*",
+        "./package.json": "./package.json"
+    },
+    "files": [
+        "lib",
+        "zh.md",
+        "CHANGELOG.md"
+    ],
+    "directories": {
+        "lib": "lib",
+        "test": "test"
+    },
+    "scripts": {
+        "build": "node scripts/build.mjs",
+        "typecheck": "tsc --noEmit",
+        "pretest": "node scripts/build.mjs",
+        "test": "node --test test/xqsql.test.mjs test/consistency.test.mjs test/package.test.mjs test/types.test.mjs test/browser-pages.test.mjs test/server.test.mjs",
+        "test:browser": "node scripts/serve.mjs",
+        "test:browser:check": "node scripts/test-browser.mjs",
+        "prepublishOnly": "node scripts/build.mjs && node --test test/package.test.mjs",
+        "verify": "npm test && npm run typecheck && npm run test:browser:check"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/gitguanqi/xqsql.git"
+    },
+    "keywords": [
+        "sql",
+        "mysql",
+        "query-builder",
+        "statement-builder",
+        "xqsql"
+    ],
+    "author": "gitguanqi",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/gitguanqi/xqsql/issues"
+    },
+    "homepage": "https://github.com/gitguanqi/xqsql#readme",
+    "engines": {
+        "node": ">=16"
+    },
+    "devDependencies": {
+        "esbuild": "^0.28.2",
+        "typescript": "^7.0.2"
+    }
 }

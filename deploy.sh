@@ -3,7 +3,7 @@
 # date: 2022.09.29
 # des: this is a auto submit shell script.
 
-set 0
+set -euo pipefail
 
 git add .
 read -p "Please input your commit:" commit

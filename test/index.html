@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xqsql · 自查索引</title>
+    <link rel="icon" href="./icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./demo.css">
+</head>
+
+<body>
+    <header>
+        <img src="./icon.svg" alt="" width="28" height="28">
+        <h1>xqsql 自查索引</h1>
+    </header>
+
+    <p class="hint">三个页面加载同一套用例（<code>core-checks.js</code>），只验证不同的消费路径。全部离线运行，不需要 CDN。</p>
+
+    <h2>页面</h2>
+    <ol id="checks">
+        <li class="is-pass">
+            <span class="mark">UMD</span>
+            <span class="title"><a href="./browser.html">browser.html</a> —— <code>&lt;script&gt;</code> 标签 + 全局 <code>window.xqsql</code></span>
+        </li>
+        <li class="is-pass">
+            <span class="mark">ESM</span>
+            <span class="title"><a href="./esm.html">esm.html</a> —— <code>import</code> 默认导出与命名导出</span>
+        </li>
+        <li class="is-pass">
+            <span class="mark">AMD</span>
+            <span class="title"><a href="./amd.html">amd.html</a> —— 本地 require.js 2.3.6</span>
+        </li>
+    </ol>
+
+    <h2>运行方式</h2>
+    <p class="hint">
+        <code>npm run test:browser</code> 启动本地服务（默认 <code>http://127.0.0.1:4001/test/</code>），<br>
+        <code>npm test</code> 跑 Node 侧断言，<code>npm run test:browser:check</code> 用本机浏览器做一次自动验收。
+    </p>
+
+    <h2>说明</h2>
+    <ul>
+        <li>每个页面都会把 PASS / FAIL 写在 <code>#summary</code>，并把生成的 SQL 渲染到 <code>#results</code>。</li>
+        <li>断言结果同时挂到 <code>window.__XQSQL_TEST__</code>，供 <code>scripts/test-browser.mjs</code> 读取。</li>
+        <li>页面结束后仍保留可用实例（<code>window.__XQSQL_DEMO__.api</code>），可在控制台继续调用。</li>
+    </ul>
+</body>
+
+</html>

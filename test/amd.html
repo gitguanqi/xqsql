@@ -1,25 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xqsql amd test</title>
-    <script src="https://cdn.bootcdn.net/ajax/libs/require.js/2.3.6/require.min.js"></script>
+    <title>xqsql · AMD 自查</title>
+    <link rel="icon" href="./icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./demo.css">
 </head>
+
 <body>
-    <h3>xqsql amd test</h3>
+    <header>
+        <img src="./icon.svg" alt="" width="28" height="28">
+        <h1>xqsql · AMD</h1>
+        <nav>
+            <a href="./index.html">索引</a>
+            <a href="./browser.html">UMD</a>
+            <a href="./esm.html">ESM</a>
+        </nav>
+    </header>
+
+    <p class="hint">本地 <code>vendor/require-2.3.6.min.js</code> 加载 <code>../lib/xqsql.min.js</code>，验证 UMD 的 <code>define(factory)</code> 分支（离线可跑）。</p>
+
+    <div class="summary" id="summary" role="status" aria-live="polite">running…</div>
+
+    <h2>断言</h2>
+    <ol id="checks"></ol>
+    <p id="details"></p>
+
+    <h2>生成的 SQL（结果面板）</h2>
+    <ol id="results"></ol>
+
+    <script src="./vendor/require-2.3.6.min.js"></script>
+    <script src="./core-checks.js"></script>
+    <script src="./checks.js"></script>
     <script>
         requirejs.config({
             baseUrl: './',
             paths: {
-                'amd': './amd',
-            }
+                xqsql: '../lib/xqsql.min',
+            },
         });
-        requirejs(['amd'], function(){
-            console.log('This is a index.html, require amd success!');
-        })
+
+        requirejs(['./amd-checks'], null, function (error) {
+            window.XqChecks.record(false, 'AMD 模块加载', error && error.message ? error.message : String(error));
+            window.XqChecks.finish(null, 'AMD');
+        });
     </script>
 </body>
+
 </html>
-                

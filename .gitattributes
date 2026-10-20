@@ -1,0 +1,9 @@
+* text=auto eol=lf
+
+# 压缩产物不参与 diff 展示，但仍需提交（CDN 与文档引用这些路径）
+*.min.js -diff
+*.min.mjs -diff
+
+*.png binary
+*.jpg binary
+*.ico binary

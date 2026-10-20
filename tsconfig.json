@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "strict": true,
+        "noEmit": true,
+        "skipLibCheck": true,
+        "noUnusedLocals": false,
+        "types": [],
+        "paths": {
+            "xqsql": [
+                "./lib/types/index.d.ts"
+            ]
+        }
+    },
+    "include": [
+        "lib/types/**/*.d.ts",
+        "test/ts-fixture/**/*.ts"
+    ]
+}
