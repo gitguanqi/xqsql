@@ -1,6 +1,6 @@
 {
     "name": "xqsql",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "description": "Zero-dependency MySQL statement builder with safe quoting.",
     "main": "lib/xqsql.js",
     "module": "lib/xqsql-esm.mjs",
@@ -8,6 +8,8 @@
     "unpkg": "lib/xqsql.min.js",
     "jsdelivr": "lib/xqsql.min.js",
     "types": "lib/types/index.d.ts",
+    "llms": "./llms.txt",
+    "agents": "./skills/xqsql-sql-builder/SKILL.md",
     "sideEffects": false,
     "exports": {
         ".": {
@@ -21,6 +23,8 @@
     },
     "files": [
         "lib",
+        "llms.txt",
+        "skills",
         "zh.md",
         "CHANGELOG.md"
     ],
@@ -32,11 +36,13 @@
         "build": "node scripts/build.mjs",
         "typecheck": "tsc --noEmit",
         "pretest": "node scripts/build.mjs",
-        "test": "node --test test/xqsql.test.mjs test/consistency.test.mjs test/package.test.mjs test/types.test.mjs test/browser-pages.test.mjs test/server.test.mjs",
+        "test": "node --test test/xqsql.test.mjs test/consistency.test.mjs test/package.test.mjs test/types.test.mjs test/agent-metadata.test.mjs test/browser-pages.test.mjs test/server.test.mjs",
         "test:browser": "node scripts/serve.mjs",
         "test:browser:check": "node scripts/test-browser.mjs",
-        "prepublishOnly": "node scripts/build.mjs && node --test test/package.test.mjs",
-        "verify": "npm test && npm run typecheck && npm run test:browser:check"
+        "prepublishOnly": "node scripts/build.mjs && node --test test/package.test.mjs test/agent-metadata.test.mjs",
+        "verify": "npm test && npm run typecheck && npm run test:browser:check",
+        "commitlint": "commitlint --edit",
+        "prepare": "husky"
     },
     "repository": {
         "type": "git",
@@ -59,7 +65,11 @@
         "node": ">=16"
     },
     "devDependencies": {
+        "@commitlint/cli": "^19.8.1",
+        "@commitlint/config-conventional": "^19.8.1",
         "esbuild": "^0.28.2",
+        "husky": "^9.1.7",
+        "lint-staged": "^15.5.2",
         "typescript": "^7.0.2"
     }
 }

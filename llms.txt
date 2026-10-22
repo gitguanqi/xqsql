@@ -1,0 +1,112 @@
+# xqsql
+
+Zero-dependency MySQL statement builder that returns SQL **text**. Runs in Node (CJS and ESM) and in browsers (UMD global / AMD). It never connects to, executes, or parameterizes a query.
+
+## Install
+
+```sh
+npm install xqsql
+```
+
+## Imports
+
+```js
+// Node (CommonJS) -> lib/xqsql.js
+const xqsql = require('xqsql');
+
+// Node / bundler (ESM) -> lib/xqsql-esm.mjs
+import xqsql, { add, get, up, del } from 'xqsql';
+
+// Browser UMD -> window.xqsql, also available as xqsql/lib/xqsql.min.js on a CDN
+// <script src="xqsql/lib/xqsql.min.js"></script>
+```
+
+Named exports are the four builders only. `create` and `XqSqlError` live on the default export (`xqsql.create`, `xqsql.XqSqlError`) and are **not** named exports.
+
+## Exported API
+
+- `add(table: string, rows: object[], fields: Field[]) => string`
+  Builds one multi-row `INSERT INTO ... VALUES (...), (...)`. Only columns listed in `fields` are written; extra row keys are ignored. No `id` column is injected — declare `{ value: 'id' }` yourself if you need it.
+- `get(table, params, mode = 'default', field = '*') => string | { sql, count }`
+  - `mode: 'default'`: `params` is `{ type: 'all' }`, `{ type: 'one', key, ids: [v] }`, or `{ type: 'more', key, ids: [v, ...] }`.
+  - `mode: 'more'`: `params` is a condition object `{ column: value }`; columns in `likeFields` become `LIKE '%value%'`, all others become `= value`.
+  - `mode: 'page'`: returns `{ sql, count }`; `params` is `{ limits: { size, offset? }, list?, sorts? }`.
+- `up(table, params, fields, mode = 'one') => string`
+  `params = { list: { column: value }, key?, ids? }`. Only columns present in both `fields` and `list` are set. `undefined` skips a column, `null` writes `NULL`.
+- `del(table, params?, mode = 'one') => string`
+  `params = { key?, ids? }`. `mode: 'all'` ignores `params` entirely, so `del('goods', '', 'all')` is valid.
+- `create(options?: { likeFields?: string[] }) => { add, get, up, del }`
+  Isolated instance with its own LIKE allow-list. Default `likeFields` is `['name', 'user', 'origin_name', 'url']`.
+- `xqsql.XqSqlError`
+  Error class thrown for every invalid input. Fields: `code: number`, `msg: string` (machine-readable), `info: string` (human text, currently Chinese), `details: object`, `method toJSON()`.
+
+Exported types (`lib/types/index.d.ts`): `SqlValue`, `Field`, `Options`, `OneParams`, `ManyParams`, `AllParams`, `DefaultParams`, `ConditionParams`, `PageParams`, `PageResult`, `UpdateParams`, `DeleteParams`, `AddFn`, `GetFn`, `UpFn`, `DelFn`, `CreateFn`, `Xqsql`, and the `XqSqlError` type.
+
+## Key Options
+
+- `SqlValue = string | number | bigint | boolean | Date | null | undefined`. Arrays, plain objects, `NaN`, `Infinity` and invalid `Date` throw code 108.
+- `Field = { value: string, name?: string, isMust?: boolean }`. `value` is the column name (must match `/^[A-Za-z_][A-Za-z0-9_$]{0,63}$/`); `name` only appears in error text; `isMust: true` rejects `''` / `null` / `undefined` with code 101.
+- `field` (`get`'s 4th argument): `'*'` (default), `'id,name'`, or `['id', 'name']`.
+- `limits.size` required, non-negative safe integer; `limits.offset` preferred (SQL `OFFSET`, **not** a page number) and `limits.page` is a legacy alias for it — compute `offset = (page - 1) * size` yourself.
+- `sorts = { name: string, val?: 'ASC' | 'DESC' }`, any case, defaults to `DESC`.
+- In `mode: 'more'` / `params.list`, conditions equal to `undefined`, `null` or `''` are skipped; `0` and `false` are kept.
+
+## Typical Use
+
+```js
+const xqsql = require('xqsql');
+
+const GOODS_FIELDS = [
+    { name: 'name', value: 'name', isMust: true },
+    { name: 'qty', value: 'number' },
+    { name: 'price', value: 'price' },
+];
+
+xqsql.add('goods', [{ name: 'apple', number: 10, price: 8.8 }], GOODS_FIELDS);
+// INSERT INTO `goods` (`name`, `number`, `price`) VALUES ('apple', 10, 8.8)
+
+xqsql.get('goods', { name: 'apple', number: 10 }, 'more');
+// SELECT * FROM `goods` WHERE `name` LIKE '%apple%' AND `number` = 10
+
+xqsql.get('goods', {
+    list: { name: 'banana' },
+    sorts: { name: 'create_time', val: 'DESC' },
+    limits: { offset: 0, size: 10 },
+}, 'page');
+// { sql: "SELECT * FROM `goods` WHERE `name` LIKE '%banana%' ORDER BY `create_time` DESC LIMIT 0, 10",
+//   count: "SELECT COUNT(*) FROM `goods` WHERE `name` LIKE '%banana%'" }
+
+xqsql.up('goods', { key: 'id', ids: [1], list: { price: 9.9 } }, GOODS_FIELDS);
+// UPDATE `goods` SET `price` = 9.9 WHERE `id` = 1
+
+try {
+    xqsql.add('goods', [{ name: '' }], [{ name: 'name', value: 'name', isMust: true }]);
+} catch (error) {
+    if (error instanceof xqsql.XqSqlError) return res.json(error.toJSON());
+    throw error;
+}
+```
+
+## Error codes
+
+| code | msg | Trigger |
+| --- | --- | --- |
+| 101 | `save_fail` | an `isMust` field is `''` / `null` / `undefined` |
+| 102 | `invalid_identifier` | bad table / column / condition key / sort column, or missing `sorts.name` |
+| 103 | `invalid_number` | `limits.size` / `limits.offset` missing or not a non-negative integer |
+| 104 | `invalid_order` | `sorts.val` is neither `ASC` nor `DESC` |
+| 105 | `empty_input` | empty `rows` / `fields`, or no updatable column in `up` |
+| 106 | `invalid_ids` | `ids` is not an array or has the wrong length for the mode |
+| 107 | `invalid_mode` | unknown `mode` or `params.type` |
+| 108 | `invalid_value` | unsupported value (object, array, `NaN`, invalid `Date`) |
+| 109 | `invalid_argument` | `params` / `list` / `limits` / `sorts` not an object, or bad `create` options |
+
+## Constraints
+
+- Output is concatenated SQL text. There is no `?` placeholder and no binding: execute it with `mysql2`'s `query`, or switch to `execute` with your own placeholders when input is fully untrusted.
+- `%` and `_` inside `LIKE` conditions pass through as wildcards; escape them if you need literal matching.
+- Validation is about injection and shape, not business safety: `del('goods', '', 'all')` really emits a full-table `DELETE`.
+- Identifiers (table, column, condition key, sort column) must be ASCII and at most 64 chars; `schema.table` is allowed for tables only. Invalid names throw instead of being quoted.
+- `XqSqlError.info` is Chinese text; match on `code` / `msg` for program logic.
+- `main`/`module`/`browser`/`types` and `exports` are the only supported entries; deep imports work only through `xqsql/lib/*`.
+- Details, thresholds and migration notes: `skills/xqsql-sql-builder/SKILL.md` and `skills/xqsql-sql-builder/references/api.md`.

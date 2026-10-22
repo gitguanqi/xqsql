@@ -22,6 +22,7 @@
 - [安全声明](#安全声明)
 - [迁移到 200](#迁移到-200)
 - [本地测试页面](#本地测试页面)
+- [AI 元数据](#ai-元数据)
 - [开发](#开发)
 
 ---
@@ -389,6 +390,29 @@ npm run test:browser:check  # 用真实浏览器跑一遍三个页面并汇总�
 
 ---
 
+## AI 元数据
+
+发布包里带了两份给编码智能体读的入口文件（`llms.txt` 与 `SKILL.md`），运行时 API 完全没有变化：
+
+| 字段 | 文件 | 作用 |
+| --- | --- | --- |
+| `llms` | `llms.txt` | 精简 API 面：四种引入方式、全部导出、关键选项、错误码、一个可直接抄的例子、硬约束 |
+| `agents` | `skills/xqsql-sql-builder/SKILL.md` | 可移植 skill：入口选择、接入顺序、容易踩的坑、验收命令 |
+
+`package.json` 里已声明这两个字段，`files` 也放行了 `llms.txt` 与 `skills/`，因此 `npm pack` 会带上它们：
+
+```json
+{
+    "llms": "./llms.txt",
+    "agents": "./skills/xqsql-sql-builder/SKILL.md",
+    "files": ["lib", "llms.txt", "skills", "zh.md", "CHANGELOG.md"]
+}
+```
+
+完整的签名、参数与值编码表在 `skills/xqsql-sql-builder/references/api.md`。`test/agent-metadata.test.mjs` 会逐字比对文档里的示例 SQL 与实际输出，并对导出名、错误码、frontmatter 和相对链接做校验，文档写错就构建失败。
+
+---
+
 ## 开发
 
 ```bash
@@ -401,6 +425,16 @@ npm run verify              # 上述三者串起来
 ```
 
 源码在 `src/`，**不要直接编辑 `lib/`**——`lib/xqsql*.js` 全部由 `scripts/build.mjs` 生成，`pretest` 会强制重建。
+
+### 提交信息
+
+`npm install` 通过 `prepare` → `husky` 注册 Git 钩子：`commit-msg` 走 commitlint（Conventional Commits），`pre-commit` 走 lint-staged（本项目不引入 linter，只做零依赖的 `node --check` 语法检查）。
+
+```bash
+git commit -m "fix(xqsql): 修复 LIKE 值中的引号转义"
+```
+
+可用类型：`feat`、`fix`、`docs`、`style`、`refactor`、`perf`、`test`、`build`、`ci`、`revert`、`chore`。发版前先升版本号（连同 `package-lock.json` 根版本），并让 `CHANGELOG.md` 出现对应版本标题。
 
 ---
 

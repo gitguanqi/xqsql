@@ -2,6 +2,22 @@
 
 本文件记录 xqsql 的用户可见变更。版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
+## [2.0.1] - 2026-10-22
+
+### Added
+
+- `llms.txt` 与 `package.json` 的 `llms` 字段：给编码智能体的精简 API 面（引入方式、导出、选项、错误码、约束）。
+- `skills/xqsql-sql-builder/SKILL.md` 与 `references/api.md`，并通过 `agents` 字段声明：说明入口选择、接入顺序、`likeFields` / `offset` / `isMust` / `undefined` 等易错点。
+- `test/agent-metadata.test.mjs`：校验元数据目标存在、进入发布清单、frontmatter 合法、相对链接可解析，并逐字比对文档示例 SQL 与运行时输出。
+- 提交规范校验链路（仅开发期，不进发布产物）：`commitlint.config.mjs`、`lint-staged.config.mjs`、`.husky/commit-msg`、`.husky/pre-commit`，以及 `prepare` / `commitlint` 两个 npm 脚本。
+
+### Changed
+
+- 发布清单新增 `llms.txt` 与 `skills/`，其余发布内容不变。
+- 开发依赖新增 `@commitlint/cli`、`@commitlint/config-conventional`、`husky`、`lint-staged`（均限制在支持 Node 18 的版本段），运行时依赖仍为零。
+
+> 本次只新增元数据、文档与提交工具链，`main` / `module` / `browser` / `types` / `exports` 与运行时代码均未改动，可按补丁版本发布。
+
 ## [2.0.0] - 2026-10-21
 
 ### Breaking Changes
